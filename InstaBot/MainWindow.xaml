@@ -1,0 +1,21 @@
+﻿<Window x:Class="InstaBot.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:InstaBot"
+        mc:Ignorable="d"
+        Title="InstaBot" Height="326.259" Width="313.406">
+    <Grid>
+        <Grid IsEnabled="{Binding Path=IsEditingMode}">
+            <DataGrid ItemsSource="{Binding Path=TagSpecs}" HorizontalAlignment="Left" Height="142" Margin="22,48,0,0" VerticalAlignment="Top" Width="261" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding TagName}" ClipboardContentBinding="{x:Null}" Header="HashTags" Width="*"/>
+                    <DataGridTextColumn Binding="{Binding LikesNumber}" ClipboardContentBinding="{x:Null}" Header="Number of Likes"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <Button Command="{Binding StartCommand}" Content="Start" HorizontalAlignment="Left" Margin="22,233,0,0" VerticalAlignment="Top" Width="75"/>
+        </Grid>
+        <Button Command="{Binding StopCommand}" Content="Stop" HorizontalAlignment="Left" Margin="208,233,0,0" VerticalAlignment="Top" Width="75"/>
+    </Grid>
+</Window>
