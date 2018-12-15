@@ -16,6 +16,6 @@
             </DataGrid>
             <Button Command="{Binding StartCommand}" Content="Start" HorizontalAlignment="Left" Margin="22,233,0,0" VerticalAlignment="Top" Width="75"/>
         </Grid>
-        <Button Command="{Binding StopCommand}" Content="Stop" HorizontalAlignment="Left" Margin="208,233,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button Command="{Binding StopCommand}" IsEnabled="{Binding Path=IsBotRunning}" Content="Stop" HorizontalAlignment="Left" Margin="208,233,0,0" VerticalAlignment="Top" Width="75"/>
     </Grid>
 </Window>

@@ -18,10 +18,20 @@ namespace InstaBot
     {
         public ICommand StartCommand { get; }
         public ICommand StopCommand { get; }
-        public bool IsEditingMode { get; set; }
+        public bool IsEditingMode
+        {
+            get => _isEditingMode;
+            set
+            {
+                _isEditingMode = value;
+                IsBotRunning = !_isEditingMode;
+            }
+        }
+        public bool IsBotRunning { get; set; }
         public ObservableCollection<TagSpecsViewModel> TagSpecs { get; set; }
         private Thread _botRunningThread;
         private IWebDriver _webDriver;
+        private bool _isEditingMode;
 
         public MainWindowViewModel()
         {
@@ -29,6 +39,7 @@ namespace InstaBot
             StopCommand = new RelayCommand(StopRunning);
             TagSpecs = new ObservableCollection<TagSpecsViewModel>();
             IsEditingMode = true;
+            var loginCredentials = CredentialsManager.GetLoginData();
         }
 
         private void StartRunning(object obj)
