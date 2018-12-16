@@ -8,15 +8,15 @@
         Title="InstaBot" Height="326.259" Width="313.406">
     <Grid>
         <Grid IsEnabled="{Binding Path=IsEditingMode}">
-            <DataGrid ItemsSource="{Binding Path=TagSpecs}" HorizontalAlignment="Left" Height="142" Margin="22,48,0,0" VerticalAlignment="Top" Width="261" AutoGenerateColumns="False">
+            <DataGrid ItemsSource="{Binding Path=TagSpecs}" HorizontalAlignment="Left" Margin="12,55,0,81" VerticalAlignment="Stretch" AutoGenerateColumns="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding TagName}" ClipboardContentBinding="{x:Null}" Header="HashTags" Width="*"/>
                     <DataGridTextColumn Binding="{Binding LikesNumber}" ClipboardContentBinding="{x:Null}" Header="Number of Likes"/>
                 </DataGrid.Columns>
             </DataGrid>
-            <Button Command="{Binding StartCommand}" Content="Start" HorizontalAlignment="Left" Margin="22,233,0,0" VerticalAlignment="Top" Width="75"/>
-            <CheckBox IsChecked="{Binding RenewCredentialsOnStart}" x:Name="NewCredentialsCheck" Content="Renew credentials on start" HorizontalAlignment="Left" Margin="22,270,0,0" VerticalAlignment="Top"/>
+            <Button Command="{Binding StartCommand}" Content="Start" HorizontalAlignment="Left" Margin="22,0,0,43" VerticalAlignment="Bottom" Width="75"/>
+            <CheckBox IsChecked="{Binding RenewCredentialsOnStart}" x:Name="NewCredentialsCheck" Content="Renew credentials on start" HorizontalAlignment="Left" Margin="22,0,0,10" VerticalAlignment="Bottom"/>
         </Grid>
-        <Button Command="{Binding StopCommand}" IsEnabled="{Binding Path=IsBotRunning}" Content="Stop" HorizontalAlignment="Left" Margin="208,233,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button Command="{Binding StopCommand}" IsEnabled="{Binding Path=IsBotRunning}" Content="Stop" HorizontalAlignment="Left" Margin="198,0,0,41" VerticalAlignment="Bottom" Width="75"/>
     </Grid>
 </Window>
