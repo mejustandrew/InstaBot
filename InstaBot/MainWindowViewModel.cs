@@ -18,6 +18,15 @@ namespace InstaBot
     {
         public ICommand StartCommand { get; }
         public ICommand StopCommand { get; }
+        public bool IsBotRunning { get; set; }
+        public ObservableCollection<TagSpecsViewModel> TagSpecs { get; set; }
+        public bool RenewCredentialsOnStart { get; set; }
+
+        private Thread _botRunningThread;
+        private IWebDriver _webDriver;
+        private bool _isEditingMode;
+        private Credentials _loginCredentials;
+
         public bool IsEditingMode
         {
             get => _isEditingMode;
@@ -27,24 +36,29 @@ namespace InstaBot
                 IsBotRunning = !_isEditingMode;
             }
         }
-        public bool IsBotRunning { get; set; }
-        public ObservableCollection<TagSpecsViewModel> TagSpecs { get; set; }
-        private Thread _botRunningThread;
-        private IWebDriver _webDriver;
-        private bool _isEditingMode;
 
         public MainWindowViewModel()
         {
             StartCommand = new RelayCommand(StartRunning);
             StopCommand = new RelayCommand(StopRunning);
-            TagSpecs = new ObservableCollection<TagSpecsViewModel>();
+            TagSpecs = new ObservableCollection<TagSpecsViewModel>
+            {
+                new TagSpecsViewModel
+                {
+                    TagName = "life",
+                    LikesNumber = "200"
+                }
+            };
             IsEditingMode = true;
-            var loginCredentials = CredentialsManager.GetLoginData();
+            _loginCredentials = CredentialsManager.GetLoginData();
         }
 
         private void StartRunning(object obj)
         {
             IsEditingMode = false;
+            if (RenewCredentialsOnStart)
+                _loginCredentials = CredentialsManager.RenewCredentials();
+
             _botRunningThread = new Thread(RunBot);
             _botRunningThread.Start();
         }
@@ -54,6 +68,7 @@ namespace InstaBot
             _webDriver = new ChromeDriver();
 
             LogIntoInstagram();
+            HandleNotificationsSetting();
 
             foreach (var spec in TagSpecs)
             {
@@ -74,7 +89,7 @@ namespace InstaBot
             }
         }
 
-        void LogIntoInstagram()
+        private void LogIntoInstagram()
         {
             _webDriver.Navigate().GoToUrl("https://www.instagram.com/accounts/login/");
 
@@ -82,17 +97,33 @@ namespace InstaBot
 
             var userName = _webDriver.FindElement(By.Name("username"));
             var password = _webDriver.FindElement(By.Name("password"));
-            var loginButton = _webDriver.FindElement(By.ClassName("KUBKM"));
+            //var loginButton = _webDriver.FindElement(By.ClassName("L3NKy"));
+            var loginButton = _webDriver.FindElement(By.XPath("//button[text()=\"Log in\"]"));
 
-            userName.SendKeys("user");
-            password.SendKeys("pass");
+            userName.SendKeys(_loginCredentials.Username);
+            WaitSomeTime(WaitingPeriod.Short);
+            password.SendKeys(_loginCredentials.Password);
 
             WaitSomeTime(WaitingPeriod.Short);
             loginButton.Submit();
+
             WaitSomeTime();
         }
 
-        void SearchHashtag(string tag)
+        private void HandleNotificationsSetting()
+        {
+            try
+            {
+                var notNow = _webDriver.FindElement(By.XPath("//button[text()=\"Not Now\"]"));
+                notNow.Click();
+                WaitSomeTime();
+            }
+            catch
+            {
+            }
+        }
+
+        private void SearchHashtag(string tag)
         {
             var hashtag = tag.StartsWith("#") ? tag : "#" + tag;
 
@@ -107,8 +138,10 @@ namespace InstaBot
             WaitSomeTime();
         }
 
-        void LikeSomePosts(int likesNumber)
+        private void LikeSomePosts(int likesNumber)
         {
+           //ScrollDown();
+
             var posts = _webDriver.FindElements(By.ClassName("_9AhH0"));
 
             foreach (var post in posts)
@@ -120,28 +153,65 @@ namespace InstaBot
             }
         }
 
-        void LikePost(IWebElement post)
+        private void ScrollDown()
         {
-            post.Click();
-            WaitSomeTime(WaitingPeriod.Short);
+            for (int i = 0; i < 20; i++)
+            {
+                ((IJavaScriptExecutor)_webDriver).ExecuteScript("scrollBy(0,1000)");
+                WaitSomeTime(WaitingPeriod.Short);
+            }
+        }
 
+        private void LikePost(IWebElement post)
+        {
+            OpenPost(post);
+            ClickHeart();
+            ClosePost();
+        }
+
+        private void OpenPost(IWebElement post)
+        {
             try
             {
-                var heart = _webDriver.FindElement(By.ClassName("glyphsSpriteHeart__outline__24__grey_9"));
+                post.Click();
+                WaitSomeTime();
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        private void ClickHeart()
+        {
+            try
+            {
+                var heart = _webDriver.FindElement(By.ClassName("coreSpriteHeartOpen"));
                 heart.Click();
             }
-            catch { /*this means that the heart is already red*/ }
+            catch (Exception ex)
+            {
+                /*this could mean that the heart is already red*/
+            }
             finally
             {
                 WaitSomeTime(WaitingPeriod.Short);
             }
-
-            var closePhotoButton = _webDriver.FindElement(By.ClassName("ckWGn"));
-            closePhotoButton.Click();
-            WaitSomeTime(WaitingPeriod.Short);
         }
 
-        void WaitSomeTime(WaitingPeriod waitingPeriod = WaitingPeriod.Medium)
+        private void ClosePost()
+        {
+            try
+            {
+                var closePhotoButton = _webDriver.FindElement(By.ClassName("ckWGn"));
+                closePhotoButton.Click();
+                WaitSomeTime(WaitingPeriod.Short);
+            }
+            catch
+            {
+            }
+        }
+
+        private void WaitSomeTime(WaitingPeriod waitingPeriod = WaitingPeriod.Medium)
         {
             switch (waitingPeriod)
             {

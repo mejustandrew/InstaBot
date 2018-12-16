@@ -15,6 +15,7 @@
                 </DataGrid.Columns>
             </DataGrid>
             <Button Command="{Binding StartCommand}" Content="Start" HorizontalAlignment="Left" Margin="22,233,0,0" VerticalAlignment="Top" Width="75"/>
+            <CheckBox IsChecked="{Binding RenewCredentialsOnStart}" x:Name="NewCredentialsCheck" Content="Renew credentials on start" HorizontalAlignment="Left" Margin="22,270,0,0" VerticalAlignment="Top"/>
         </Grid>
         <Button Command="{Binding StopCommand}" IsEnabled="{Binding Path=IsBotRunning}" Content="Stop" HorizontalAlignment="Left" Margin="208,233,0,0" VerticalAlignment="Top" Width="75"/>
     </Grid>
