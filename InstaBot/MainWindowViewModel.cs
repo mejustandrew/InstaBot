@@ -97,7 +97,6 @@ namespace InstaBot
 
             var userName = _webDriver.FindElement(By.Name("username"));
             var password = _webDriver.FindElement(By.Name("password"));
-            //var loginButton = _webDriver.FindElement(By.ClassName("L3NKy"));
             var loginButton = _webDriver.FindElement(By.XPath("//button[text()=\"Log in\"]"));
 
             userName.SendKeys(_loginCredentials.Username);
@@ -138,24 +137,40 @@ namespace InstaBot
             WaitSomeTime();
         }
 
-        private void LikeSomePosts(int likesNumber)
+        private void LikeSomePosts(int postsNumber)
         {
-           //ScrollDown();
+            ScrollDown();
+            var popularPostsNumber = 9;
+            var likesGiven = popularPostsNumber;
+            postsNumber += popularPostsNumber;
 
             var posts = _webDriver.FindElements(By.ClassName("_9AhH0"));
 
-            foreach (var post in posts)
+            while (likesGiven < postsNumber)
             {
-                LikePost(post);
-                WaitSomeTime(WaitingPeriod.Short);
-                if (--likesNumber == 0)
+                try
+                {
+                    for (int i = popularPostsNumber; i < posts.Count && likesGiven < postsNumber; i++)
+                    {
+                        LikePost(posts[i]);
+                        WaitSomeTime(WaitingPeriod.Short);
+                        likesGiven++;
+                    }
+                }
+                catch (StaleElementReferenceException ex)
+                {
+                    posts = _webDriver.FindElements(By.ClassName("_9AhH0"));
+                }
+                catch (Exception e)
+                {
                     return;
+                }
             }
         }
 
         private void ScrollDown()
         {
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 50; i++)
             {
                 ((IJavaScriptExecutor)_webDriver).ExecuteScript("scrollBy(0,1000)");
                 WaitSomeTime(WaitingPeriod.Short);
@@ -186,11 +201,14 @@ namespace InstaBot
             try
             {
                 var heart = _webDriver.FindElement(By.ClassName("coreSpriteHeartOpen"));
-                heart.Click();
+                var heartSpan = heart.FindElement(By.XPath("./span"));
+                var likeText = heartSpan.GetAttribute("aria-label");
+
+                if (likeText.ToLower() != "unlike")
+                    heart.Click();
             }
             catch (Exception ex)
             {
-                /*this could mean that the heart is already red*/
             }
             finally
             {
