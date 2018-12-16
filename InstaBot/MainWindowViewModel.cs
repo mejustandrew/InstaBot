@@ -150,12 +150,13 @@ namespace InstaBot
             {
                 try
                 {
-                    for (int i = popularPostsNumber; i < posts.Count && likesGiven < postsNumber; i++)
+                    while (likesGiven < posts.Count && likesGiven < postsNumber)
                     {
-                        LikePost(posts[i]);
+                        LikePost(posts[likesGiven]);
                         WaitSomeTime(WaitingPeriod.Short);
                         likesGiven++;
                     }
+                    return;
                 }
                 catch (StaleElementReferenceException ex)
                 {
