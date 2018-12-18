@@ -75,6 +75,7 @@
     </Compile>
     <Compile Include="CredentialsHandling\CredentialsWindowViewModel.cs" />
     <Compile Include="CredentialsHandling\StringCypher.cs" />
+    <Compile Include="LikesLogger.cs" />
     <Compile Include="NotifiableObject.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="SettingsRepository.cs" />

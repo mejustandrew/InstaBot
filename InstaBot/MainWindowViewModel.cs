@@ -64,8 +64,9 @@ namespace InstaBot
 
         private void RunBot()
         {
-            _webDriver = new ChromeDriver();
+            LikesLogger.LogStart();
 
+            _webDriver = new ChromeDriver();
             LogIntoInstagram();
             HandleNotificationsSetting();
             while(_shouldRun)
@@ -207,7 +208,10 @@ namespace InstaBot
                 var likeText = heartSpan.GetAttribute("aria-label");
 
                 if (likeText.ToLower() != "unlike")
+                {
                     heart.Click();
+                    LikesLogger.LogLike();
+                }
             }
             catch (Exception ex)
             {
@@ -255,6 +259,7 @@ namespace InstaBot
             _shouldRun = false;
             Mouse.OverrideCursor = Cursors.Wait;
             _botRunningThread.Abort();
+            LikesLogger.LogStop();
             CloseWebDriver();
             Mouse.OverrideCursor = null;
             IsEditingMode = true;
