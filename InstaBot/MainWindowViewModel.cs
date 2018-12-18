@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using System.Linq;
 
 namespace InstaBot
 {
@@ -25,6 +26,7 @@ namespace InstaBot
         private Thread _botRunningThread;
         private IWebDriver _webDriver;
         private bool _isEditingMode;
+        private bool _shouldRun;
         private Credentials _loginCredentials;
 
         public bool IsEditingMode
@@ -41,20 +43,17 @@ namespace InstaBot
         {
             StartCommand = new RelayCommand(StartRunning);
             StopCommand = new RelayCommand(StopRunning);
-            TagSpecs = new ObservableCollection<TagSpecsViewModel>
-            {
-                new TagSpecsViewModel
-                {
-                    TagName = "life",
-                    LikesNumber = "200"
-                }
-            };
+            var specs = SettingsRepository.ReadTagSettings();
+            TagSpecs = new ObservableCollection<TagSpecsViewModel>(specs);
             IsEditingMode = true;
             _loginCredentials = CredentialsManager.GetLoginData();
         }
 
         private void StartRunning(object obj)
         {
+            SettingsRepository.SaveTagSettings(TagSpecs.ToList());
+
+            _shouldRun = true;
             IsEditingMode = false;
             if (RenewCredentialsOnStart)
                 _loginCredentials = CredentialsManager.RenewCredentials();
@@ -69,10 +68,12 @@ namespace InstaBot
 
             LogIntoInstagram();
             HandleNotificationsSetting();
-
-            foreach (var spec in TagSpecs)
+            while(_shouldRun)
             {
-                LikePostsAccordingToSpecs(spec);
+                foreach (var spec in TagSpecs)
+                {
+                    LikePostsAccordingToSpecs(spec);
+                }
             }
 
             CloseWebDriver();
@@ -232,16 +233,17 @@ namespace InstaBot
 
         private void WaitSomeTime(WaitingPeriod waitingPeriod = WaitingPeriod.Medium)
         {
+            int delayFactor = 2;
             switch (waitingPeriod)
             {
                 case WaitingPeriod.Short:
-                    Thread.Sleep(500);
+                    Thread.Sleep(delayFactor * 500);
                     break;
                 case WaitingPeriod.Medium:
-                    Thread.Sleep(3000);
+                    Thread.Sleep(delayFactor * 3000);
                     break;
                 case WaitingPeriod.Long:
-                    Thread.Sleep(6000);
+                    Thread.Sleep(delayFactor * 6000);
                     break;
                 default:
                     throw new NotSupportedException();
@@ -250,6 +252,7 @@ namespace InstaBot
 
         private void StopRunning(object obj)
         {
+            _shouldRun = false;
             Mouse.OverrideCursor = Cursors.Wait;
             _botRunningThread.Abort();
             CloseWebDriver();

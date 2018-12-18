@@ -77,6 +77,7 @@
     <Compile Include="CredentialsHandling\StringCypher.cs" />
     <Compile Include="NotifiableObject.cs" />
     <Compile Include="RelayCommand.cs" />
+    <Compile Include="SettingsRepository.cs" />
     <Compile Include="TagSpecsViewModel.cs" />
     <Page Include="CredentialsHandling\CredentialsWindow.xaml">
       <SubType>Designer</SubType>
