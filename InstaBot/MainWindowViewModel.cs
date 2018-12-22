@@ -141,7 +141,7 @@ namespace InstaBot
 
         private void LikeSomePosts(int postsNumber)
         {
-            ScrollDown();
+            LoadPostsInPage();
             var popularPostsNumber = 9;
             var likesGiven = popularPostsNumber;
             postsNumber += popularPostsNumber;
@@ -171,13 +171,16 @@ namespace InstaBot
             }
         }
 
-        private void ScrollDown()
+        private void LoadPostsInPage()
         {
             for (int i = 0; i < 50; i++)
             {
                 ((IJavaScriptExecutor)_webDriver).ExecuteScript("scrollBy(0,1000)");
                 WaitSomeTime(WaitingPeriod.Short);
             }
+
+            ((IJavaScriptExecutor)_webDriver).ExecuteScript("window.scrollTo(0, 0)");
+            WaitSomeTime(WaitingPeriod.Short);
         }
 
         private void LikePost(IWebElement post)
