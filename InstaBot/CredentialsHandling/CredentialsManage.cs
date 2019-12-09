@@ -1,4 +1,6 @@
-﻿namespace InstaBot
+﻿using InstaBotApi.CredentialsHandling;
+
+namespace InstaBot
 {
     static class CredentialsManager
     {

@@ -2,9 +2,9 @@
 using Newtonsoft.Json;
 using System.IO;
 
-namespace InstaBot
+namespace InstaBotApi.CredentialsHandling
 {
-    static class CredentialsRepository
+    public static class CredentialsRepository
     {
         private const string CredentialsFilePath = "Credentials.txt";
 
