@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Linq;
+using System.Windows;
 
 namespace InstaBot
 {
@@ -9,6 +11,10 @@ namespace InstaBot
     {
         public MainWindow()
         {
+#if DEBUG
+            Process.Start("chromekiller.exe");
+#endif
+
             InitializeComponent();
 
             DataContext = new MainWindowViewModel();
