@@ -26,7 +26,7 @@ namespace InstaBotApi
 
             ThreadDelayer.WaitSomeTime(WaitingPeriod.Short);
 
-            var loginButton = webDriver.FindElements(By.TagName("button")).First(x=>x.Text.ToLower() == "log in");
+            var loginButton = webDriver.FindElements(By.TagName("button")).First(x => x.Text.ToLower() == "log in");
             loginButton.Submit();
 
             ThreadDelayer.WaitSomeTime(WaitingPeriod.Short);

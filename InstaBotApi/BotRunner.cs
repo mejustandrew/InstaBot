@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -45,14 +46,13 @@ namespace InstaBotApi
 
             InstagramAuthenticator.LogIntoInstagram();
             HandleNotificationsSetting();
-            while (true)
+
+            foreach (var tag in tags)
             {
-                foreach (var tag in tags)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    LikePostsAccordingToTag(tag);
-                }
+                cancellationToken.ThrowIfCancellationRequested();
+                LikePostsAccordingToTag(tag);
             }
+
         }
 
         private static void LikePostsAccordingToTag(Tag tag)
@@ -160,13 +160,14 @@ namespace InstaBotApi
         {
             try
             {
-                var heart = WebDriverProvider.WebDriver.FindElement(By.ClassName("coreSpriteHeartOpen"));
-                var heartSpan = heart.FindElement(By.XPath("./span"));
-                var likeText = heartSpan.GetAttribute("aria-label");
+                LikesLogger.LogAttempToLike();
+                var buttons = WebDriverProvider.WebDriver.FindElements(By.TagName("button"));
+                var likeButton = buttons.FirstOrDefault(x => x.FindElements(By.TagName("span")) != null && x.FindElements(By.TagName("span"))
+                .Any(y => y.GetAttribute("aria-label") == "Like"));
 
-                if (likeText.ToLower() != "unlike")
+                if (likeButton != null)
                 {
-                    heart.Click();
+                    likeButton.Click();
                     LikesLogger.LogLikeGiven();
                 }
             }
