@@ -9,7 +9,7 @@ namespace InstaBotApi
 {
     public class Tag
     {
-        public string Name { get; set; }
+        public string TagName { get; set; }
         public string LikesNumber { get; set; }
     }
 
@@ -58,9 +58,9 @@ namespace InstaBotApi
         private static void LikePostsAccordingToTag(Tag tag)
         {
             int likesNumber;
-            if (tag.Name != "" && int.TryParse(tag.LikesNumber, out likesNumber))
+            if (tag.TagName != "" && int.TryParse(tag.LikesNumber, out likesNumber))
             {
-                SearchHashtag(tag.Name);
+                SearchHashtag(tag.TagName);
                 LikeSomePosts(likesNumber);
             }
         }

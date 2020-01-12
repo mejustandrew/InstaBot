@@ -50,7 +50,7 @@ namespace InstaBot
             if (RenewCredentialsOnStart)
                 CredentialsManager.RenewCredentials();
 
-            var tags = TagSpecs.Select(x => new Tag { LikesNumber = x.LikesNumber, Name = x.TagName });
+            var tags = TagSpecs.Select(x => new Tag { LikesNumber = x.LikesNumber, TagName = x.TagName });
             BotRunner.RunBotForTagsAsync(tags);
         }
 

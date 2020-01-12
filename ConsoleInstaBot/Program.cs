@@ -1,4 +1,7 @@
-﻿using System;
+﻿using InstaBotApi;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.IO;
 
 namespace ConsoleInstaBot
 {
@@ -6,8 +9,9 @@ namespace ConsoleInstaBot
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("InstaBot started!");
-
+            var serializedTags = File.ReadAllText("Preferences.txt");
+            var tags = JsonConvert.DeserializeObject<List<Tag>>(serializedTags);
+            BotRunner.RunBotForTagsAsync(tags);
         }
     }
 }
