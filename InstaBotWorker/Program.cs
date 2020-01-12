@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
+using System.Diagnostics;
 
 namespace InstaBotWorker
 {
@@ -14,11 +13,20 @@ namespace InstaBotWorker
             CreateHostBuilder(args).UseWindowsService().Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
+                    ConfigureLogging(hostContext.Configuration);
                     services.AddHostedService<Worker>();
                 });
+
+        private static void ConfigureLogging(IConfiguration configuration)
+        {
+            var loggingPath = configuration.GetValue<string>("Logging:OutputPath");
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.File(loggingPath, rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+        }
     }
 }
