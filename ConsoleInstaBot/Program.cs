@@ -11,7 +11,7 @@ namespace ConsoleInstaBot
         {
             var serializedTags = File.ReadAllText("Preferences.txt");
             var tags = JsonConvert.DeserializeObject<List<Tag>>(serializedTags);
-            BotRunner.RunBotForTagsAsync(tags);
+            //BotRunner.RunBotForTagsAsync(tags);
         }
     }
 }

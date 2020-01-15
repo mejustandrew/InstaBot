@@ -14,15 +14,10 @@ namespace InstaBotWorker
     {
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                Log.Information("something is running");
-                await Task.Delay(2000);
-            }
-            //var serializedTags = File.ReadAllText("Preferences.txt");
-            //var tags = JsonConvert.DeserializeObject<List<Tag>>(serializedTags);
-            //await BotRunner.RunBotForTagsAsync(tags);
+            Log.Information("Runnin started");
+            var serializedTags = File.ReadAllText("Preferences.txt");
+            var tags = JsonConvert.DeserializeObject<List<Tag>>(serializedTags);
+            await BotRunner.RunBotForTagsAsync(tags, new LoggerWrapper()) ;
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
@@ -35,8 +30,8 @@ namespace InstaBotWorker
         public override Task StopAsync(CancellationToken cancellationToken)
         {
             Log.Information("Service stop triggered");
-
-            return base.StopAsync(cancellationToken);
+            BotRunner.StopRunning();
+            return base.StartAsync(cancellationToken);
         }
     }
 }
