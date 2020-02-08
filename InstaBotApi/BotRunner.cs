@@ -29,7 +29,7 @@ namespace InstaBotApi
                 {
                     _botRunningTask = new Task(() => RunBotForTags(tags, _cancelationTokenSource.Token));
                     _botRunningTask.Start();
-                    _botRunningTask.ContinueWith(task => WebDriverProvider.CloseWebDriver(), TaskScheduler.FromCurrentSynchronizationContext());
+                    _botRunningTask.ContinueWith(task => WebDriverProvider.CloseWebDriver(), TaskScheduler.Current);
                     return _botRunningTask;
                 }
                 else
