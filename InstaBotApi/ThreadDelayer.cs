@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 
 namespace InstaBotApi
 {
     public enum WaitingPeriod
     {
+        VeryShort,
         Short,
         Medium,
         Long
@@ -17,6 +17,9 @@ namespace InstaBotApi
             int delayFactor = 2;
             switch (waitingPeriod)
             {
+                case WaitingPeriod.VeryShort:
+                    Thread.Sleep(delayFactor * 100);
+                    break;
                 case WaitingPeriod.Short:
                     Thread.Sleep(delayFactor * 500);
                     break;
@@ -27,7 +30,8 @@ namespace InstaBotApi
                     Thread.Sleep(delayFactor * 6000);
                     break;
                 default:
-                    throw new NotSupportedException();
+                    Thread.Sleep(delayFactor * 3000);
+                    return;
             }
         }
     }

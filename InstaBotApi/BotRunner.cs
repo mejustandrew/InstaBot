@@ -55,7 +55,6 @@ namespace InstaBotApi
                 cancellationToken.ThrowIfCancellationRequested();
                 LikePostsAccordingToTag(tag);
             }
-
         }
 
         private static void LikePostsAccordingToTag(Tag tag)
@@ -72,10 +71,13 @@ namespace InstaBotApi
         {
             try
             {
-                _logger.Information("Handling notification settings pop-up");
-                var notNow = WebDriverProvider.WebDriver.FindElement(By.XPath("//button[text()=\"Not Now\"]"));
-                notNow.Click();
-                ThreadDelayer.WaitSomeTime();
+                for(int i=0; i <= 1; i++)
+                {
+                    _logger.Information("Handling notification settings pop-up");
+                    var notNow = WebDriverProvider.WebDriver.FindElement(By.XPath("//button[text()=\"Not Now\"]"));
+                    notNow.Click();
+                    ThreadDelayer.WaitSomeTime();
+                }
             }
             catch(Exception ex)
             {
@@ -90,11 +92,13 @@ namespace InstaBotApi
 
             var searchBar = WebDriverProvider.WebDriver.FindElement(By.ClassName("XTCLo"));
 
-            searchBar.SendKeys(hashtag);
+            searchBar.InsertText(hashtag);
             ThreadDelayer.WaitSomeTime();
 
             searchBar.SendKeys(Keys.Return);
-            searchBar.SendKeys(Keys.Return);
+            ThreadDelayer.WaitSomeTime(WaitingPeriod.Short);
+
+            //searchBar.SendKeys(Keys.Return);
 
             ThreadDelayer.WaitSomeTime();
         }

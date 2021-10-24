@@ -15,12 +15,16 @@ namespace InstaBotApi
 
             ThreadDelayer.WaitSomeTime();
 
+            AcceptCookies(webDriver);
+
+            ThreadDelayer.WaitSomeTime();
+
             var userName = webDriver.FindElement(By.Name("username"));
             var password = webDriver.FindElement(By.Name("password"));
 
-            userName.SendKeys(loginCredentials.Username);
+            userName.InsertText(loginCredentials.Username);
             ThreadDelayer.WaitSomeTime(WaitingPeriod.Short);
-            password.SendKeys(loginCredentials.Password);
+            password.InsertText(loginCredentials.Password);
 
             ThreadDelayer.WaitSomeTime(WaitingPeriod.Short);
 
@@ -31,6 +35,16 @@ namespace InstaBotApi
 
 
             ThreadDelayer.WaitSomeTime();
+        }
+
+        private static void AcceptCookies(IWebDriver webDriver)
+        {
+            var acceptButton = webDriver.FindElements(By.TagName("button")).FirstOrDefault(x => string.Equals(x.Text, "Accept All", StringComparison.OrdinalIgnoreCase));
+
+            if (acceptButton != null)
+            {
+                acceptButton.Submit();
+            }
         }
     }
 }
