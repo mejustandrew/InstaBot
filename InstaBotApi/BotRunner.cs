@@ -71,7 +71,7 @@ namespace InstaBotApi
         {
             try
             {
-                for(int i=0; i <= 1; i++)
+                for (int i = 0; i <= 1; i++)
                 {
                     _logger.Information("Handling notification settings pop-up");
                     var notNow = WebDriverProvider.WebDriver.FindElement(By.XPath("//button[text()=\"Not Now\"]"));
@@ -79,7 +79,7 @@ namespace InstaBotApi
                     ThreadDelayer.WaitSomeTime();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.Error($"Exception of type {ex.GetType()} occured when attempting to handle notification settings pop-up. Exception message: {ex.Message}");
             }
@@ -98,7 +98,7 @@ namespace InstaBotApi
             searchBar.SendKeys(Keys.Return);
             ThreadDelayer.WaitSomeTime(WaitingPeriod.Short);
 
-            //searchBar.SendKeys(Keys.Return);
+            searchBar.SendKeys(Keys.Return);
 
             ThreadDelayer.WaitSomeTime();
         }
@@ -173,13 +173,13 @@ namespace InstaBotApi
             try
             {
                 _logger.Information("Attempting to like");
-                var buttons = WebDriverProvider.WebDriver.FindElements(By.TagName("button"));
-                var likeButton = buttons.FirstOrDefault(x => x.FindElements(By.TagName("span")) != null && x.FindElements(By.TagName("span"))
-                .Any(y => y.GetAttribute("aria-label") == "Like"));
+                var buttons = WebDriverProvider.WebDriver.FindElements(By.CssSelector("[aria-label=Like]"));
+                var likeButton = buttons.LastOrDefault(x => x.Displayed && x.Enabled);
 
                 if (likeButton != null)
                 {
                     likeButton.Click();
+                    ThreadDelayer.WaitSomeTime(WaitingPeriod.Short);
                     _logger.Information("Like given successfully");
                 }
             }
@@ -197,8 +197,8 @@ namespace InstaBotApi
         {
             try
             {
-                var closePhotoButton = WebDriverProvider.WebDriver.FindElement(By.ClassName("ckWGn"));
-                closePhotoButton.Click();
+                var closePhotoButton = WebDriverProvider.WebDriver.FindElements(By.CssSelector("[aria-label=Close]"));
+                closePhotoButton.First().Click();
                 ThreadDelayer.WaitSomeTime(WaitingPeriod.Short);
             }
             catch (Exception ex)
@@ -210,6 +210,7 @@ namespace InstaBotApi
         public static void StopRunning()
         {
             _cancelationTokenSource.Cancel();
+            ThreadDelayer.WaitSomeTime();
             _logger.Information("Canceled the token on runner.");
             WebDriverProvider.CloseWebDriver();
             _logger.Information("Closed web driver");

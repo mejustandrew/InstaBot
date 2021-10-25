@@ -7,14 +7,28 @@ namespace InstaBotApi
 {
     static class WebDriverProvider
     {
-        public static IWebDriver WebDriver { get; private set; } = new ChromeDriver(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
+        public static IWebDriver WebDriver
+        {
+            get
+            {
+                if (_webDriver == null)
+                    _webDriver = new ChromeDriver(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
+
+                return _webDriver;
+            }
+            private set
+            {
+                _webDriver = value;
+            }
+        }
+        private static IWebDriver _webDriver;
 
         public static void CloseWebDriver()
         {
             if (WebDriver == null)
                 return;
 
-            WebDriver.Close();
+            WebDriver.Quit();
             WebDriver.Dispose();
             WebDriver = null;
         }
